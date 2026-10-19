@@ -1,0 +1,8 @@
+[package]
+name = "apex-rust-spatial-fusion"
+version = "1.0.0"
+edition = "2021"
+authors = ["Med12334 <Mohamedkhelifi41@gmail.com>"]
+description = "Layers 12-16: Memory-Safe Crowdsourced Map Fusion, Kalman Trajectory Merging & Spatiotemporal Change Detection"
+
+[dependencies]

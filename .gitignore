@@ -1,0 +1,12 @@
+target/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+node_modules/
+dist/
+.angular/
+*.out
+*.o
+*.exe
+cpp_sfm_test
+.DS_Store

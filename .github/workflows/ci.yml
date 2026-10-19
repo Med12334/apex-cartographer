@@ -1,0 +1,93 @@
+name: Apex-Cartographer 35-Layer Autonomous Mapping & 3D Vision CI Matrix
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  layer35-architecture-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run 35-Layer Pre-Flight Cartography Architecture Verifier
+        run: bash ./scripts/verify-apex-cartographer.sh
+
+  layers1to5-cpp20-fleet-ingest-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile & Execute C++20 Asynchronous Fleet Multi-Camera Ingest Pipeline
+        run: |
+          g++ -std=c++20 -O3 -Wall -Wextra -pthread cpp20-fleet-mapping-pipeline/src/fleet_data_ingest.cpp -o cpp_fleet_ingest_test
+          ./cpp_fleet_ingest_test
+
+  layers6to11-cpp20-multiview-sfm-and-pnp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile & Execute C++20 Multi-View SfM, Epipolar & PnP Pose Engine
+        run: |
+          g++ -std=c++20 -O3 -Wall -Wextra cpp20-multiview-sfm-engine/src/multiview_sfm.cpp -o cpp_sfm_test
+          ./cpp_sfm_test
+
+  layers12to16-rust-kalman-map-fusion-and-change-detection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Memory-Safe Rust Kalman Map Fusion & Change Detection Suite
+        working-directory: ./rust-spatial-fusion-engine
+        run: cargo test --verbose
+
+  layers17to21-python-se3-sensor-calibration-and-uncertainty:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run SE(3) Extrinsics Calibration & Covariance Propagation Pytest Suite
+        working-directory: ./python-sensor-calibration-rig
+        run: |
+          pip install -r requirements.txt
+          PYTHONPATH=. pytest -v
+
+  layers22to27-go-map-freshness-and-autonomy-evaluator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go 1.22
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Run Go Map Freshness, Loop-Closure Consistency & Coverage Tests
+        working-directory: ./go-map-triage-broker
+        run: go test -v ./...
+
+  layers28to33-python-semantic-lane-topology-builder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Catmull-Rom 3D Lane Centerline Spline & Semantic Road DAG Tests
+        working-directory: ./semantic-topology-builder
+        run: |
+          pip install pytest==8.3.3
+          PYTHONPATH=. pytest -v
+
+  layer34-react18-reconstruction-triage-workbench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run React 18 Reconstruction & Localization Drift Triage Tests
+        working-directory: ./react-cartography-soc-ui
+        run: npm test

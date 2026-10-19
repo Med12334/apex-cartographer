@@ -1,0 +1,13 @@
+{
+  "name": "apex-react-cartography-soc-ui",
+  "version": "1.0.0",
+  "description": "Layer 34: React 18 3D Reconstruction, Pose Error & Fleet Data Gap Triage Workbench",
+  "type": "module",
+  "scripts": {
+    "test": "node --test src/app/triage_selector.test.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

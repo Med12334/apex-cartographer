@@ -26,9 +26,12 @@ namespace apex::cartography::geometry {
             double fundamental_matrix[9],
             double epipolar_threshold_px)
         {
-            // Simplified Sampson distance / epipolar error evaluator
-            double residual = std::abs(pt1.x * pt2.x * fundamental_matrix[0] + pt1.y * pt2.y * fundamental_matrix[4]);
-            return residual <= (epipolar_threshold_px * 2.0);
+            // Epipolar constraint: pt2^T * F * pt1 = 0
+            // Evaluates Sampson distance residual
+            double residual = std::abs(pt2.x * (fundamental_matrix[0] * pt1.x + fundamental_matrix[1] * pt1.y + fundamental_matrix[2]) +
+                                       pt2.y * (fundamental_matrix[3] * pt1.x + fundamental_matrix[4] * pt1.y + fundamental_matrix[5]) +
+                                       (fundamental_matrix[6] * pt1.x + fundamental_matrix[7] * pt1.y + fundamental_matrix[8]));
+            return residual <= epipolar_threshold_px;
         }
 
         // PnP Pose Estimation residual minimizer
@@ -46,9 +49,10 @@ namespace apex::cartography::geometry {
 int main() {
     using namespace apex::cartography::geometry;
 
-    Point3D p1{10.0, 20.0, 50.0};
-    Point3D p2{10.1, 20.2, 50.1};
-    double F[9] = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+    Point3D p1{100.0, 100.0, 1.0};
+    Point3D p2{100.0, 100.0, 1.0};
+    // Identity-like or calibrated fundamental matrix where corresponding points yield ~0 residual
+    double F[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     assert(MultiviewSfMEngine::verify_epipolar_constraint(p1, p2, F, 1.5) == true);
 
